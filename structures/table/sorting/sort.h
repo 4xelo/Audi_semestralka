@@ -25,7 +25,7 @@ namespace structures
 		int currentNotification_;
 	};
 
-	/// <summary> Triedenie NonortedSequenceTable navrhnuté ako funkèný objekt. </summary>
+	/// <summary> Triedenie NonortedSequenceTable navrhnutï¿½ ako funkï¿½nï¿½ objekt. </summary>
 	/// <typeparam name = "K"> Kluc prvkov v tabulke. </typepram>
 	/// <typeparam name = "T"> Typ dat ukladanych v tabulke. </typepram>
 	template <typename K, typename T>
@@ -38,14 +38,14 @@ namespace structures
 		/// <summary> Destruktor. </summary>
 		virtual ~Sort();
 
-		/// <summary> Funkèný operátor utriedi tabu¾ku. </summary>
+		/// <summary> Funkï¿½nï¿½ operï¿½tor utriedi tabuï¿½ku. </summary>
 		/// <param name = "table"> NonortedSequenceTable, ktoru ma utriedit. </param>
-		/// <remarks> Využíva metódu sort. </remarks>
+		/// <remarks> Vyuï¿½ï¿½va metï¿½du sort. </remarks>
 		void operator()(UnsortedSequenceTable<K, T>& table);
 
-		/// <summary> Utriedi tabu¾ku. </summary>
+		/// <summary> Utriedi tabuï¿½ku. </summary>
 		/// <param name = "table"> NonortedSequenceTable, ktoru ma utriedit. </param>
-		virtual void sort(UnsortedSequenceTable<K, T>& table) = 0;
+		virtual void sort(UnsortedSequenceTable<K, T>& table, bool vzostupne) = 0;
 
 		/// <summary> Parametricky konstruktor. </summary>
 		/// <param name = "sortNotifier"> Funkcny objekt urceny na notifikaciu pokroku v triediacom algoritme. </param>

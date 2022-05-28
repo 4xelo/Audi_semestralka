@@ -7,6 +7,8 @@
 #include <fstream>
 #include "iostream"
 #include <sstream>
+#include <vector>
+#include <random>
 
 namespace structures
 {
@@ -99,13 +101,10 @@ namespace structures
 
                 auto vzd = new Vzdelanie(vzd0, vzd1, vzd2, vzd3, vzd4, vzd5, vzd6, vzd7);
                 auto obec = new Obec(obcCode,obcOT,obcMT,obcST, vzd);
-                std::cout << obec->toString() << std::endl;
 
                 obce->insert(obcCode, obec);
 
                 pomTabObce->insert(obcOT, obcCode);
-
-                std::cout << index << std::endl;
 
                 index++;
             }
@@ -131,4 +130,7 @@ namespace structures
 
         return obec;
     }
+
+
+
 }

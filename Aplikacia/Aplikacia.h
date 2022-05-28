@@ -4,7 +4,7 @@
 
 #pragma once
 #include "../structures/table/sorted_sequence_table.h"
-
+#include "../structures/table/unsorted_sequence_table.h"
 #include "../UzemneJednotky/Obec.h"
 
 namespace structures
@@ -20,7 +20,6 @@ namespace structures
         Obec* najdi(const std::string&);
 
         SortedSequenceTable<std::string, Obec*>* getObce() {return obce;}
-
         ~Aplikacia();
     };
 }

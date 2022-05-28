@@ -38,8 +38,6 @@ namespace structures
 		/// <exception cref="std::logic_error"> Vyhodena, ak tabulka uz obsahuje data s takymto klucom. </exception>
 		void insert(const K& key, const T& data) override;
 
-        //Vlozi data s danym klucom do tabulky bez kontroly
-        void insertUnsafe(const K& key, const T& data);
 	protected:
 		/// <summary> Najde prvok tabulky s danym klucom. </summary>
 		/// <param name = "key"> Hladany kluc. </param>
@@ -84,45 +82,21 @@ namespace structures
 	template<typename K, typename T>
 	inline void SortedSequenceTable<K, T>::insert(const K& key, const T& data)
 	{
-        bool found = false;//nemusi sa volat rovnako
+        bool found = false;
         int index = indexOfKey(key, 0, this->size() - 1, found);
         int i = 0;
 
         if(!found) {
             SequenceTable<K, T>::list_->insert(new TableItem<K, T>(key, data), index);
         } else{
-            i++;
-            std::stringstream ss;
-            ss << key << i;
-            std::string vysl = ss.str();
-            SequenceTable<K,T>::list_->add(new TableItem<K,T>(vysl,data));
-
-        }
-
-    }
-
-    template <typename K, typename T>
-    void SortedSequenceTable<K, T>::insertUnsafe(const K& key, const T& data)
-    {
-        int i= 0;
-        if (!SequenceTable<K,T>::containsKey(key))
-        {
-            SequenceTable<K, T>::list_->add(new TableItem<K, T>(key, data));
-        }
-        else {
-            i++;
-            std::stringstream ss;
-            ss << key << i;
-            std::string vysl = ss.str();
-            std::cout << vysl<< std::endl;
-            insertUnsafe(vysl, data);
+            throw std::logic_error("Kluc sa uz v tabulke nachazda");
         }
     }
 
 	template<typename K, typename T>
 	inline TableItem<K, T>* SortedSequenceTable<K, T>::findTableItem(const K& key)
 	{
-        bool found = false;//nemusi sa volat rovnako
+        bool found = false;
         int index = indexOfKey(key, 0, this->size() - 1, found);
 
         return found ? SequenceTable<K, T>::list_->at(index) : nullptr;

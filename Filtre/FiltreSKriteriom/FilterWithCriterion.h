@@ -2,9 +2,9 @@
 // Created by Alexander Krajči on 28/05/2022.
 //
 
-#include "../UzemneJednotky/Obec.h"
-#include "../Kriterium/CriterionObec.h"
-#include "Filter.h"
+#include "../../UzemneJednotky/Obec.h"
+#include "../../Kriterium/CriterionObec.h"
+#include "../Filter.h"
 #pragma once
 
     template <typename valueType>

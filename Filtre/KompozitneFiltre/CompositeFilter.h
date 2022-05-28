@@ -2,8 +2,8 @@
 // Created by Alexander Krajči on 28/05/2022.
 //
 
-#include "Filter.h"
-#include "../list/array_list.h"
+#include "../Filter.h"
+#include "list/array_list.h"
 #pragma once
 
 

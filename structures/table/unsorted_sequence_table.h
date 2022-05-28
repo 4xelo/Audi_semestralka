@@ -21,6 +21,13 @@ namespace structures
 		/// <param name = "other"> NonortedSequenceTable, z ktorej sa prevezmu vlastnosti. </param>
 		UnsortedSequenceTable(UnsortedSequenceTable<K, T>& other);
 
+
+        /// <summary> Priradenie struktury. </summary>
+        /// <param name = "other"> Struktura, z ktorej ma prebrat vlastnosti. </param>
+        /// <returns> Adresa, na ktorej sa struktura nachadza. </returns>
+        Structure& assign(Structure& other) override;
+
+
 		/// <summary> Porovnanie struktur. </summary>
 		/// <param name="other">Struktura, s ktorou sa ma tato struktura porovnat. </param>
 		/// <returns>True ak su struktury zhodne typom aj obsahom. </returns>
@@ -51,11 +58,17 @@ namespace structures
 		assign(other);
 	}
 
-	template<typename K, typename T>
-	inline bool UnsortedSequenceTable<K, T>::equals(Structure& other)
-	{
-		return Table<K, T>::equals(dynamic_cast<UnsortedSequenceTable<K, T>*>(&other));
-	}
+    template<typename K, typename T>
+    inline Structure& UnsortedSequenceTable<K, T>::assign(Structure& other)
+    {
+        return SequenceTable<K, T>::assignSequenceTable(dynamic_cast<UnsortedSequenceTable<K, T>&>(other));
+    }
+
+    template<typename K, typename T>
+    inline bool UnsortedSequenceTable<K, T>::equals(Structure& other)
+    {
+        return Table<K, T>::equalsTable(dynamic_cast<UnsortedSequenceTable<K, T>*>(&other));
+    }
 
 	template<typename K, typename T>
 	inline TableItem<K, T>& UnsortedSequenceTable<K, T>::getItemAtIndex(int index)

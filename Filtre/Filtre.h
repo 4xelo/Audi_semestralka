@@ -2,7 +2,7 @@
 // Created by Alexander Krajči on 28/05/2022.
 //
 #include "../Kriterium/CriterionObecVPocet.h"
-#include "Filter_FFi.h"
+#include "FiltreSKriteriom/Filter_FFi.h"
 #include "../Vzdelanie/Vzdelanie.h"
 #pragma once
 

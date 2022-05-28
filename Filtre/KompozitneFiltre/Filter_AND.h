@@ -3,7 +3,7 @@
 //
 
 #include "CompositeFilter.h"
-#include "../UzemneJednotky/Obec.h"
+#include "../../UzemneJednotky/Obec.h"
 
 #pragma once
 
