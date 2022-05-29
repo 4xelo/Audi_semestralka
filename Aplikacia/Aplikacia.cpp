@@ -9,6 +9,7 @@
 #include "heap_sort.h"
 #include "../Filtre/Filter.h"
 #include "../Filtre/Filters.h"
+#include "../Filtre/KompozitneFiltre/Filter_AND.h"
 #include "../Filtre/KompozitneFiltre/Filter_OR.h"
 #include "../Kriterium/CriterionObecNazov.h"
 #include "../Kriterium/CriterionObec.h"
@@ -355,7 +356,50 @@ namespace structures {
         } while (res);
 
         TypVzdelania typ;
-        typ = vyberVzdelanie(res, volbaVzdelania);
+        do {
+            res = false;
+            std::cout << "Zvol si aky typ vzdelania bude filtrovat filter vzdelanie Pocet: " << std::endl;
+            std::cout << "0 - Bez ukonceneho vzdelania" << std::endl;
+            std::cout << "1 - Zakladne vzdelanie" << std::endl;
+            std::cout << "2 - Ucnovske vzdelanie" << std::endl;
+            std::cout << "3 - Stredne vzdelanie" << std::endl;
+            std::cout << "4 - Vyssie vzdelanie" << std::endl;
+            std::cout << "5- Vysokoskolske vzdelanie" << std::endl;
+            std::cout << "6 - Bez vzdelania" << std::endl;
+            std::cout << "7 - Nezistene" << std::endl;
+            std::cin >> vyber;
+            volbaVzdelania = atoi(vyber.c_str());
+            if (volbaVzdelania < 0 || volbaVzdelania > 7) {
+                res = true;
+                std::cout << "Bola zadana zla hodnota, prosim zopakujte vyber: ";
+            }
+        } while (res);
+
+        switch (volbaVzdelania) {
+            case 0:
+                typ = TypVzdelania::bez_ukonceneho;
+                break;
+            case 1:
+                typ = TypVzdelania::zakladne;
+                break;
+            case 2:
+                typ = TypVzdelania::ucnovske;
+                break;
+            case 3:
+                typ = TypVzdelania::stredne;
+                break;
+            case 4:
+                typ = TypVzdelania::vyssie;
+                break;
+            case 5:
+                typ = TypVzdelania::vysokoskolske;
+                break;
+            case 6:
+                typ = TypVzdelania::bez_vzdelania;
+                break;
+            default:
+                typ = TypVzdelania::nezistene;
+        }
 
         if (volbaFiltra == 1) {
             jednoFiltroveVzdelaniePocet(typ);
@@ -372,11 +416,96 @@ namespace structures {
 
         int volbaKompozicie;
         TypVzdelania typPocet;
-        typPocet = vyberVzdelanie(res,volbaVzdelaniaFPocet);
+        do {
+            res = false;
+            std::cout << "Zvol si aky typ vzdelania bude filtrovat filter vzdelanie Pocet: " << std::endl;
+            std::cout << "0 - Bez ukonceneho vzdelania" << std::endl;
+            std::cout << "1 - Zakladne vzdelanie" << std::endl;
+            std::cout << "2 - Ucnovske vzdelanie" << std::endl;
+            std::cout << "3 - Stredne vzdelanie" << std::endl;
+            std::cout << "4 - Vyssie vzdelanie" << std::endl;
+            std::cout << "5- Vysokoskolske vzdelanie" << std::endl;
+            std::cout << "6 - Bez vzdelania" << std::endl;
+            std::cout << "7 - Nezistene" << std::endl;
+            std::cin >> vyber;
+            volbaVzdelaniaFPocet = atoi(vyber.c_str());
+            if (volbaVzdelaniaFPocet < 0 || volbaVzdelaniaFPocet > 7) {
+                res = true;
+                std::cout << "Bola zadana zla hodnota, prosim zopakujte vyber: ";
+            }
+        } while (res);
+
+        switch (volbaVzdelaniaFPocet) {
+            case 0:
+                typPocet = TypVzdelania::bez_ukonceneho;
+                break;
+            case 1:
+                typPocet = TypVzdelania::zakladne;
+                break;
+            case 2:
+                typPocet = TypVzdelania::ucnovske;
+                break;
+            case 3:
+                typPocet = TypVzdelania::stredne;
+                break;
+            case 4:
+                typPocet = TypVzdelania::vyssie;
+                break;
+            case 5:
+                typPocet = TypVzdelania::vysokoskolske;
+                break;
+            case 6:
+                typPocet = TypVzdelania::bez_vzdelania;
+                break;
+            default:
+                typPocet = TypVzdelania::nezistene;
+        }
 
         TypVzdelania typPodiel;
-        typPodiel = vyberVzdelanie(res,volbaVzdelaniaFPodiel);
+        do {
+            res = false;
+            std::cout << "Zvol si aky typ vzdelania bude filtrovat filter vzdelanie Podiel: " << std::endl;
+            std::cout << "0 - Bez ukonceneho vzdelania" << std::endl;
+            std::cout << "1 - Zakladne vzdelanie" << std::endl;
+            std::cout << "2 - Ucnovske vzdelanie" << std::endl;
+            std::cout << "3 - Stredne vzdelanie" << std::endl;
+            std::cout << "4 - Vyssie vzdelanie" << std::endl;
+            std::cout << "5- Vysokoskolske vzdelanie" << std::endl;
+            std::cout << "6 - Bez vzdelania" << std::endl;
+            std::cout << "7 - Nezistene" << std::endl;
+            std::cin >> vyber;
+            volbaVzdelaniaFPodiel = atoi(vyber.c_str());
+            if (volbaVzdelaniaFPodiel < 0 || volbaVzdelaniaFPodiel > 7) {
+                res = true;
+                std::cout << "Bola zadana zla hodnota, prosim zopakujte vyber: ";
+            }
+        } while (res);
 
+        switch (volbaVzdelaniaFPodiel) {
+            case 0:
+                typPodiel = TypVzdelania::bez_ukonceneho;
+                break;
+            case 1:
+                typPodiel = TypVzdelania::zakladne;
+                break;
+            case 2:
+                typPodiel = TypVzdelania::ucnovske;
+                break;
+            case 3:
+                typPodiel = TypVzdelania::stredne;
+                break;
+            case 4:
+                typPodiel = TypVzdelania::vyssie;
+                break;
+            case 5:
+                typPodiel = TypVzdelania::vysokoskolske;
+                break;
+            case 6:
+                typPodiel = TypVzdelania::bez_vzdelania;
+                break;
+            default:
+                typPodiel = TypVzdelania::nezistene;
+        }
         do {
             res = false;
             std::cout << "Chcete vyfiltrovat prienik filtrov alebo zjednotenie? :" << std::endl;
@@ -414,106 +543,8 @@ namespace structures {
             }
 
         }
-        while(res);
-        TypVzdelania typ;
-         typ = vyberVzdelanie(res,volbaVzdelania);
+        while (res);
 
-
-        if (volbaKriteria == 1) {
-            bezFiltrovePocet(typ);
-
-        } else {
-            bezFiltrovePodiel(typ);
-      }
-    }
-
-    void Aplikacia::jednoFiltroveVzdelaniePocet(TypVzdelania typVzdelania) {
-        int min;
-        int max;
-        std::string minStr;
-        std::string maxStr;
-        std::cout << "Zadaj spodnu hranicu intervalu" << std::endl;
-        std::cin >> minStr;
-        min = atoi(minStr.c_str());
-
-        std::cout << "Zadaj hornu hranicu intervalu"<< std::endl;
-        std::cin >> maxStr;
-        max = atoi(maxStr.c_str());
-
-
-        CriterionObecNazov nazov;
-        CriterionObecVPocet vzdelPocet(typVzdelania);
-        FilterObecVzdelPoc vzdelPoc(min,max,typVzdelania);
-
-        for (auto data : *obce) {
-            if (vzdelPoc.pass(*data->accessData())) {
-
-                std::cout << nazov.evaluate(*data->accessData()) << " "
-                << vzdelPocet.evaluate(*data->accessData()) << std::endl;
-            }
-        }
-
-    }
-
-    void Aplikacia::jednoFiltroveVzdelaniePodiel(TypVzdelania typVzdelania) {
-        double min;
-        double max;
-        std::string minStr;
-        std::string maxStr;
-        std::cout << "Zadaj spodnu hranicu intervalu v tvare (0.12)" << std::endl;
-        std::cin.ignore();
-        getline(std::cin,minStr);
-        min = std::stod(minStr);
-
-        std::cout << "Zadaj hornu hranicu intervalu v tvare (0.12)"<< std::endl;
-        std::cin.ignore();
-        getline(std::cin, maxStr);
-        max = std::stod(maxStr);
-
-        CriterionObecNazov nazov;
-        CriterionObecVPodiel cVzdelPodiel(typVzdelania);
-        FilterObecVzdelPodiel fVzdelPodiel(min,max,typVzdelania);
-
-        for (auto data : *obce) {
-            if (fVzdelPodiel.pass(*data->accessData())) {
-
-                std::cout << nazov.evaluate(*data->accessData()) << " "
-                          << cVzdelPodiel.evaluate(*data->accessData()) << std::endl;
-            }
-        }
-    }
-
-    void Aplikacia::triedenie() {
-
-    }
-
-    void Aplikacia::bezFiltrovePocet(TypVzdelania typ) {
-        CriterionObecNazov nazov;
-        CriterionObecVPocet vzdelPocet(typ);
-
-        for (auto data : *obce) {
-
-            std::cout << nazov.evaluate(*data->accessData()) << " "
-            << vzdelPocet.evaluate(*data->accessData()) << std::endl;
-        }
-    }
-
-    void Aplikacia::bezFiltrovePodiel(TypVzdelania typ) {
-        CriterionObecNazov nazov;
-        CriterionObecVPodiel cVzdelPodiel(typ);
-
-        for (auto data : *obce) {
-
-            std::cout << nazov.evaluate(*data->accessData()) << " "
-                      << cVzdelPodiel.evaluate(*data->accessData()) << std::endl;
-
-        }
-    }
-
-
-
-    TypVzdelania Aplikacia::vyberVzdelanie(bool res, int volbaVzdelania) {
-        std::string vyber;
         do {
             res = false;
             std::cout << "Zvol si podla akeho typu vzdelania budes filtrovat: " << std::endl;
@@ -559,18 +590,195 @@ namespace structures {
                 break;
             default:
                 typ = TypVzdelania::nezistene;
+        }
+
+        if (volbaKriteria == 1) {
+            bezFiltrovePocet(typ);
+
+        } else {
+            bezFiltrovePodiel(typ);
+      }
+    }
+
+    void Aplikacia::jednoFiltroveVzdelaniePocet(TypVzdelania typVzdelania) {
+        int min;
+        int max;
+        std::string minStr;
+        std::string maxStr;
+        std::cout << "Zadaj spodnu hranicu intervalu" << std::endl;
+        std::cin >> minStr;
+        min = atoi(minStr.c_str());
+
+        std::cout << "Zadaj hornu hranicu intervalu"<< std::endl;
+        std::cin >> maxStr;
+        max = atoi(maxStr.c_str());
 
 
-                return typ;
+        CriterionObecNazov nazov;
+        CriterionObecVPocet vzdelPocet(typVzdelania);
+        FilterObecVzdelPoc vzdelPoc(min,max,typVzdelania);
+
+        for (auto data : *obce) {
+            if (vzdelPoc.pass(*data->accessData())) {
+
+                std::cout << nazov.evaluate(*data->accessData()) << " || "
+                << vzdelPocet.evaluate(*data->accessData()) << std::endl;
+            }
+        }
+
+    }
+
+    void Aplikacia::jednoFiltroveVzdelaniePodiel(TypVzdelania typVzdelania) {
+        double min;
+        double max;
+        std::string minStr;
+        std::string maxStr;
+        std::cout << "Zadaj spodnu hranicu intervalu v tvare (0.12)" << std::endl;
+        std::cin.ignore();
+        getline(std::cin,minStr);
+        min = std::stod(minStr);
+
+        std::cout << "Zadaj hornu hranicu intervalu v tvare (0.12)"<< std::endl;
+        std::cin.ignore();
+        getline(std::cin, maxStr);
+        max = std::stod(maxStr);
+
+        CriterionObecNazov nazov;
+        CriterionObecVPodiel cVzdelPodiel(typVzdelania);
+        FilterObecVzdelPodiel fVzdelPodiel(min,max,typVzdelania);
+
+        for (auto data : *obce) {
+            if (fVzdelPodiel.pass(*data->accessData())) {
+
+                std::cout << nazov.evaluate(*data->accessData()) << " || "
+                          << cVzdelPodiel.evaluate(*data->accessData()) << std::endl;
+            }
+        }
+    }
+
+    void Aplikacia::triedenie() {
+
+    }
+
+    void Aplikacia::bezFiltrovePocet(TypVzdelania typ) {
+        CriterionObecNazov nazov;
+        CriterionObecVPocet vzdelPocet(typ);
+
+        for (auto data : *obce) {
+
+            std::cout << nazov.evaluate(*data->accessData()) << " || "
+            << vzdelPocet.evaluate(*data->accessData()) << std::endl;
+        }
+    }
+
+    void Aplikacia::bezFiltrovePodiel(TypVzdelania typ) {
+        CriterionObecNazov nazov;
+        CriterionObecVPodiel cVzdelPodiel(typ);
+
+        for (auto data : *obce) {
+
+            std::cout << nazov.evaluate(*data->accessData()) << " || "
+                      << cVzdelPodiel.evaluate(*data->accessData()) << std::endl;
+
         }
     }
 
     void Aplikacia::dvojfiltrove_AND(TypVzdelania vzdPoc, TypVzdelania vzdPod) {
 
+        int minPoc;
+        int maxPoc;
+        std::string minStrPoc;
+        std::string maxStrPoc;
+        double minPod;
+        double maxPod;
+        std::string minStrPod;
+        std::string maxStrPod;
+
+        std::cout << "Zadaj spodnu hranicu intervalu pre filter Vzdelanie Pocet" << std::endl;
+        std::cin >> minStrPoc;
+        minPoc = atoi(minStrPoc.c_str());
+
+        std::cout << "Zadaj hornu hranicu intervalu pre filter Vzdelanie Pocet"<< std::endl;
+        std::cin >> maxStrPoc;
+        maxPoc = atoi(maxStrPoc.c_str());
+
+        std::cout << "Zadaj spodnu hranicu intervalu pre filter Vzdelanie Podiel v tvare (0.12)" << std::endl;
+        std::cin.ignore();
+        getline(std::cin,minStrPod);
+        minPod = std::stod(minStrPod);
+
+        std::cout << "Zadaj hornu hranicu intervalu pre filter Vzdelanie Podiel v tvare (0.12)" << std::endl;
+        std::cin.ignore();
+        getline(std::cin,maxStrPod);
+        maxPod = std::stod(maxStrPod);
+
+
+        CriterionObecNazov nazov;
+        CriterionObecVPocet vzdelPocet(vzdPoc);
+        CriterionObecVPodiel vzdelPodiel(vzdPod);
+
+        FilterObecVzdelPoc filterVzdelPocet(minPoc,maxPoc,vzdPoc);
+        FilterObecVzdelPodiel filterVzdelPodiel(minPod,maxPod,vzdPod);
+        Filter_AND filterAnd;
+        filterAnd.registerFilter(&filterVzdelPocet);
+        filterAnd.registerFilter(&filterVzdelPodiel);
+
+        std::cout << "\n\t\t\t\tFilrovanie"<< std::endl;
+
+        for (auto data : *obce) {
+            if (filterAnd.pass(*data->accessData())) {
+                std::cout << nazov.evaluate(*data->accessData()) << " || "
+                            << vzdelPocet.evaluate(*data->accessData()) << " || "
+                            << vzdelPodiel.evaluate(*data->accessData()) << std::endl;
+            }
+        }
     }
 
     void Aplikacia::dvojfiltrove_OR(TypVzdelania vzdPoc, TypVzdelania vzdPod) {
+        int minPoc;
+        int maxPoc;
+        std::string minStrPoc;
+        std::string maxStrPoc;
+        double minPod;
+        double maxPod;
+        std::string minStrPod;
+        std::string maxStrPod;
 
+        std::cout << "Zadaj spodnu hranicu intervalu pre filter Vzdelanie Pocet" << std::endl;
+        std::cin >> minStrPoc;
+        minPoc = atoi(minStrPoc.c_str());
+
+        std::cout << "Zadaj hornu hranicu intervalu pre filter Vzdelanie Pocet"<< std::endl;
+        std::cin >> maxStrPoc;
+        maxPoc = atoi(maxStrPoc.c_str());
+
+        std::cout << "Zadaj spodnu hranicu intervalu pre filter Vzdelanie Podiel z intervalu (0.1 - 0.99)" << std::endl;
+        std::cin.ignore();
+        getline(std::cin,minStrPod);
+        minPod = std::stod(minStrPod);
+
+        std::cout << "Zadaj hornu hranicu intervalu pre filter Vzdelanie Podiel v tvare (0.1 - 0.99)" << std::endl;
+        std::cin.ignore();
+        getline(std::cin,maxStrPod);
+        maxPod = std::stod(maxStrPod);
+
+        CriterionObecNazov nazov;
+        CriterionObecVPocet vzdelPocet(vzdPoc);
+        CriterionObecVPodiel vzdelPodiel(vzdPod);
+
+        FilterObecVzdelPoc filterVzdelPocet(minPoc,maxPoc,vzdPoc);
+        FilterObecVzdelPodiel filterVzdelPodiel(minPod,maxPod,vzdPod);
+        Filter_OR filterOr;
+        filterOr.registerFilter(&filterVzdelPocet);
+        filterOr.registerFilter(&filterVzdelPodiel);
+        std::cout << "\n\t\t\t\tFilrovanie"<< std::endl;
+        for (auto data : *obce) {
+            if (filterOr.pass(*data->accessData())) {
+                std::cout << nazov.evaluate(*data->accessData()) << " || "
+                          << vzdelPocet.evaluate(*data->accessData()) << " || "
+                          << vzdelPodiel.evaluate(*data->accessData()) << std::endl;
+            }
+        }
     }
 }
 

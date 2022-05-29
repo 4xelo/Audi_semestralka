@@ -29,22 +29,23 @@ namespace structures
 
         void triedenie();
 
+
         void jednoFiltrove();
 
         void dvojfiltrove();
 
         void bezFiltrove();
 
-        void jednoFiltroveVzdelaniePocet(TypVzdelania vzdelania);
 
-        void jednoFiltroveVzdelaniePodiel(TypVzdelania vzdelania);
+    private:
 
         void bezFiltrovePocet(TypVzdelania typ);
 
         void bezFiltrovePodiel(TypVzdelania typ);
 
-    private:
-        TypVzdelania vyberVzdelanie(bool res, int volbaVzdelania);
+        void jednoFiltroveVzdelaniePocet(TypVzdelania vzdelania);
+
+        void jednoFiltroveVzdelaniePodiel(TypVzdelania vzdelania);
 
         void dvojfiltrove_AND(TypVzdelania vzdPoc, TypVzdelania vzdPod);
 
