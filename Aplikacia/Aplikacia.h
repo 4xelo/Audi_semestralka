@@ -19,7 +19,35 @@ namespace structures
         void nacitaj();
         Obec* najdi(const std::string&);
 
+        void spusti();
         SortedSequenceTable<std::string, Obec*>* getObce() {return obce;}
         ~Aplikacia();
+
+        void bodoveVyhladavanie();
+
+        void filtrovanie();
+
+        void triedenie();
+
+        void jednoFiltrove();
+
+        void dvojfiltrove();
+
+        void bezFiltrove();
+
+        void jednoFiltroveVzdelaniePocet(TypVzdelania vzdelania);
+
+        void jednoFiltroveVzdelaniePodiel(TypVzdelania vzdelania);
+
+        void bezFiltrovePocet(TypVzdelania typ);
+
+        void bezFiltrovePodiel(TypVzdelania typ);
+
+    private:
+        TypVzdelania vyberVzdelanie(bool res, int volbaVzdelania);
+
+        void dvojfiltrove_AND(TypVzdelania vzdPoc, TypVzdelania vzdPod);
+
+        void dvojfiltrove_OR(TypVzdelania vzdPoc, TypVzdelania vzdPod);
     };
 }

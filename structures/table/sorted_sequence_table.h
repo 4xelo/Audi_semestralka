@@ -80,15 +80,14 @@ namespace structures
     }
 
 	template<typename K, typename T>
-	inline void SortedSequenceTable<K, T>::insert(const K& key, const T& data)
-	{
+	inline void SortedSequenceTable<K, T>::insert(const K& key, const T& data) {
         bool found = false;
         int index = indexOfKey(key, 0, this->size() - 1, found);
         int i = 0;
 
-        if(!found) {
+        if (!found) {
             SequenceTable<K, T>::list_->insert(new TableItem<K, T>(key, data), index);
-        } else{
+        } else {
             throw std::logic_error("Kluc sa uz v tabulke nachazda");
         }
     }

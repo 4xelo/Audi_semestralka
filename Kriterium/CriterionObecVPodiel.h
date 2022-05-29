@@ -16,7 +16,7 @@ private:
     TypVzdelania typVzdelania_;
 };
 
-double CriterionObecNazov::evaluate(const structures::Obec &data) {
+double CriterionObecVPodiel::evaluate(const structures::Obec &data) {
     return data.podielObyvSoVzdelanim(typVzdelania_);
 }
 

@@ -2,6 +2,7 @@
 
 #include "sort.h"
 #include "../unsorted_sequence_table.h"
+#include "../../../Kriterium/CriterionObec.h"
 
 namespace structures
 {
@@ -15,7 +16,7 @@ namespace structures
 		/// <summary> Utriedi tabulku triedenim Heap sort. </summary>
 		/// <param name = "table"> NonortedSequenceTable, ktoru ma utriedit. </param>
 		void sort(UnsortedSequenceTable<K, T>& table, bool vzostupne) override;
-        void sortWithCriterion(UnsortedSequenceTable<K,T>& table, bool vzostupne,CriterionObec<R>& criterion);
+        void sortWithCriterion(UnsortedSequenceTable<K,T>& table, bool vzostupne, CriterionObec<R>& criterion);
 	};
 
 	template<typename K, typename T, typename R>
