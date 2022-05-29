@@ -84,72 +84,79 @@ namespace structures
 
     template<typename K, typename T, typename R>
     void HeapSort<K, T, R>::sortWithCriterion(UnsortedSequenceTable<K, T> &table, bool vzostupne, CriterionObec<R>& criterion) {
-        bool vymena = false;
-        int aktualny;
-        for (int i = 1; i <= table.size() - 1; i++)
-        {
-            aktualny = i;
-            do {
-                vymena = false;
-                int otec = (aktualny - 1) / 2;
 
-                if (vzostupne) {
-                    if (aktualny > 0 && criterion.evaluate(*table.getItemAtIndex(aktualny).accessData()) >
-                                        criterion.evaluate(*table.getItemAtIndex(otec).accessData())) {
-                        table.swap(aktualny, otec);
-                        aktualny = otec;
-                        vymena = true;
-                    }
-                }
-                else {
-                    if (aktualny > 0 && criterion.evaluate(*table.getItemAtIndex(aktualny).accessData()) <
-                                        criterion.evaluate(*table.getItemAtIndex(otec).accessData())) {
-                        table.swap(aktualny,otec);
-                        aktualny = otec;
-                        vymena = true;
-                    }
-                }
-            }
-            while (vymena);
-        }
-        int max;
-        for (int i = table.size() - 1; i >= 1; i--)
-        {
-            table.swap(0, i);
-            aktualny = 0;
-            do {
-                vymena = false;
-                int lavy = aktualny * 2 + 1;
-                int pravy = aktualny * 2 + 2;
-                if (lavy < i && pravy < i) {
+        if(!table.isEmpty()) {
+            bool vymena = false;
+            int aktualny;
+
+            for (int i = 1; i <= table.size() - 1; i++)
+            {
+                aktualny = i;
+                do {
+                    vymena = false;
+                    int otec = (aktualny - 1) / 2;
+
                     if (vzostupne) {
-                        max = criterion.evaluate(*table.getItemAtIndex(lavy).accessData()) >
-                              criterion.evaluate(*table.getItemAtIndex(pravy).accessData()) ? lavy : pravy;
-                    } else {
-                        max = criterion.evaluate(*table.getItemAtIndex(lavy).accessData()) <
-                              criterion.evaluate(*table.getItemAtIndex(pravy).accessData()) ? lavy : pravy;
+                        if (aktualny > 0 && criterion.evaluate(*table.getItemAtIndex(aktualny).accessData()) >
+                                            criterion.evaluate(*table.getItemAtIndex(otec).accessData())) {
+                            table.swap(aktualny, otec);
+                            aktualny = otec;
+                            vymena = true;
+                        }
                     }
-                } else {
-                    max = lavy < i ? lavy : pravy;
-                }
-
-                if (vzostupne) {
-                    if (max < i && criterion.evaluate(*table.getItemAtIndex(max).accessData()) >
-                                   criterion.evaluate(*table.getItemAtIndex(aktualny).accessData())) {
-                        table.swap(max, aktualny);
-                        aktualny = max;
-                        vymena = true;
-                    }
-                } else {
-                    if (max < i && criterion.evaluate(*table.getItemAtIndex(max).accessData()) <
-                                        criterion.evaluate(*table.getItemAtIndex(aktualny).accessData())) {
-                        table.swap(max, aktualny);
-                        aktualny = max;
-                        vymena = true;
+                    else {
+                        if (aktualny > 0 && criterion.evaluate(*table.getItemAtIndex(aktualny).accessData()) <
+                                            criterion.evaluate(*table.getItemAtIndex(otec).accessData())) {
+                            table.swap(aktualny,otec);
+                            aktualny = otec;
+                            vymena = true;
+                        }
                     }
                 }
+                while (vymena);
             }
-             while (vymena);
+            int max;
+            for (int i = table.size() - 1; i >= 1; i--)
+            {
+                table.swap(0, i);
+                aktualny = 0;
+                do {
+                    vymena = false;
+                    int lavy = aktualny * 2 + 1;
+                    int pravy = aktualny * 2 + 2;
+                    if (lavy < i && pravy < i) {
+                        if (vzostupne) {
+                            max = criterion.evaluate(*table.getItemAtIndex(lavy).accessData()) >
+                                  criterion.evaluate(*table.getItemAtIndex(pravy).accessData()) ? lavy : pravy;
+                        } else {
+                            max = criterion.evaluate(*table.getItemAtIndex(lavy).accessData()) <
+                                  criterion.evaluate(*table.getItemAtIndex(pravy).accessData()) ? lavy : pravy;
+                        }
+                    } else {
+                        max = lavy < i ? lavy : pravy;
+                    }
+
+                    if (vzostupne) {
+                        if (max < i && criterion.evaluate(*table.getItemAtIndex(max).accessData()) >
+                                       criterion.evaluate(*table.getItemAtIndex(aktualny).accessData())) {
+                            table.swap(max, aktualny);
+                            aktualny = max;
+                            vymena = true;
+                        }
+                    } else {
+                        if (max < i && criterion.evaluate(*table.getItemAtIndex(max).accessData()) <
+                                       criterion.evaluate(*table.getItemAtIndex(aktualny).accessData())) {
+                            table.swap(max, aktualny);
+                            aktualny = max;
+                            vymena = true;
+                        }
+                    }
+                }
+                while (vymena);
+            }
+        }
+        else {
+                std::cout << "Tabulka, ktoru chces sortovat je prazdna" << std::endl;
         }
     }
 }
