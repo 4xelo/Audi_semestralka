@@ -159,7 +159,7 @@ namespace structures {
     Obec *Aplikacia::najdi(const std::string &nazov) {
         std::string kod = pomTabObce->find(nazov);
         Obec *obec = obce->find(kod);
-        std::cout << obec->toString() << std::endl;
+
 
         return obec;
     }
