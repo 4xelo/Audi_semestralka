@@ -23,6 +23,7 @@ namespace structures {
     Aplikacia::Aplikacia() {
         obce = new SortedSequenceTable<std::string, Obec *>;
         pomTabObce = new SortedSequenceTable<std::string, std::string>;
+        unsortedTable = new UnsortedSequenceTable<std::string, Obec*>;
         nacitaj();
     }
 
@@ -106,12 +107,16 @@ namespace structures {
 
             if (vzdCode == obcCode) {
 
-                auto vzd = new Vzdelanie(vzd0, vzd1, vzd2, vzd3, vzd4, vzd5, vzd6, vzd7);
-                auto obec = new Obec(obcCode, obcOT, obcMT, obcST, vzd);
+                auto vzd_1 = new Vzdelanie(vzd0, vzd1, vzd2, vzd3, vzd4, vzd5, vzd6, vzd7);
+                auto vzd_2 = new Vzdelanie(vzd0, vzd1, vzd2, vzd3, vzd4, vzd5, vzd6, vzd7);
+                auto obec1 = new Obec(obcCode, obcOT, obcMT, obcST, vzd_1);
+                auto obec2 = new Obec(obcCode, obcOT, obcMT, obcST, vzd_2);
 
-                obce->insert(obcCode, obec);
+                obce->insert(obcCode, obec1);
+                unsortedTable->insert(obcCode,obec2);
 
                 pomTabObce->insert(obcOT, obcCode);
+
 
                 index++;
             } else {
@@ -123,14 +128,22 @@ namespace structures {
             }
         }
 
-        /*auto vzd = new Vzdelanie(0, 0, 0, 0, 0, 0, 0, 0);
-        auto obec = new Obec("SKZZZZ", "Zahraničie", "Zahraničie", "Zahraničie", vzd);
-        obce->insert("SKZZZZ", obec);
+        auto vzd_1 = new Vzdelanie(0, 0, 0, 0, 0, 0, 0, 0);
+        auto obec1 = new Obec("SKZZZZ", "Zahraničie", "Zahraničie", "Zahraničie", vzd_1);
+        obce->insert("SKZZZZ", obec1);
         pomTabObce->insert("Zahraničie", "SKZZZZ");
-        auto obec2 = new Obec("SKZZZZZZZZZZ", "Zahraničie1", "Zahraničie", "Zahraničie", vzd);
-        obce->insert("SKZZZZZZZZZZ", obec2);
-        pomTabObce->insert("Zahraničie1", "SKZZZZZZZZZZ");*/
+        auto vzd_11 = new Vzdelanie(0, 0, 0, 0, 0, 0, 0, 0);
+        auto obec11 = new Obec("SKZZZZ", "Zahraničie", "Zahraničie", "Zahraničie", vzd_11);
+        unsortedTable->insert("SKZZZZ", obec11);
 
+
+        auto vzd_2 = new Vzdelanie(0, 0, 0, 0, 0, 0, 0, 0);
+        auto obec2 = new Obec("SKZZZZZZZZZZ", "Zahraničie1", "Zahraničie", "Zahraničie", vzd_2);
+        obce->insert("SKZZZZZZZZZZ", obec2);
+        pomTabObce->insert("Zahraničie1", "SKZZZZZZZZZZ");
+        auto vzd_22 = new Vzdelanie(0, 0, 0, 0, 0, 0, 0, 0);
+        auto obec22 = new Obec("SKZZZZZZZZZZ", "Zahraničie1", "Zahraničie", "Zahraničie", vzd_22);
+        unsortedTable->insert("SKZZZZZZZZZZ", obec22);
 
         loaderObci.close();
         loaderVzdelani.close();
@@ -141,7 +154,14 @@ namespace structures {
         for (auto data: *obce) {
             delete data->accessData();
         }
+        for (auto data: *unsortedTable)
+        {
+            if (data->accessData() != nullptr) {
+                delete data->accessData();
+            }
+        }
         delete obce;
+        delete unsortedTable;
         delete pomTabObce;
     }
 
@@ -160,7 +180,6 @@ namespace structures {
         int volba;
         bool res;
         std::string vyber = "";
-        auto *unsTab = new UnsortedSequenceTable<std::string, Obec *>;
 
         do {
             std::cout << "\n\n-------\t\t\t\t\t\t\t\t\tSemestrálna práca\t\t\t\t\t\t\t\t\t\t-------" << std::endl;
@@ -243,7 +262,7 @@ namespace structures {
 //        }
 //
 //        std::cout << std::endl;
-        //  auto sorterInt = new structures::HeapSort<std::string,structures::Obec*,int>;
+        //auto sorterInt = new structures::HeapSort<std::string,structures::Obec*,int>;
 //        auto sorterDouble = new structures::HeapSort<std::string,structures::Obec*,double>;
 //        auto sorterString = new structures::HeapSort<std::string,structures::Obec*,std::string>;
 //
@@ -255,7 +274,7 @@ namespace structures {
 //
 //
 
-        delete unsTab;
+       // delete unsTab;
 //        delete sorterInt;
 //        delete sorterDouble;
 //        delete sorterString;
@@ -306,22 +325,9 @@ namespace structures {
     void Aplikacia::filtrovanie() {
         bool res;
         std::string vyber;
-        int volba;
-        do {
-            res = false;
-            std::cout << "Zvolte si kolko filtrov budete pouzivat: " << std::endl;
-            std::cout << "1 - 1 filter " << std::endl;
-            std::cout << "2 - 2 filtre" << std::endl;
-            std::cout << "3 - Bez filtra" << std::endl;
-            std::cin >> vyber;
-            volba = atoi(vyber.c_str());
-            if (volba <= 0 || volba >= 4) {
-                res = true;
-                std::cout << "Bola zadana zla hodnota, prosim zopakujte vyber: ";
-            }
-        } while (res);
-
-        switch (volba) {
+        int volbaFiltra;
+        this->volbaFiltra(volbaFiltra);
+        switch (volbaFiltra) {
             case 1: {
                 jednoFiltrove();
                 break;
@@ -333,7 +339,57 @@ namespace structures {
             default:
                 bezFiltrove();
                 break;
+        }
+    }
 
+    void Aplikacia::bezFiltrove() {
+        bool res;
+        std::string vyber;
+        int volbaKriteria;
+        int volbaVzdelania = 0;
+        this->volbaKriteria(volbaKriteria);
+
+        TypVzdelania typ;
+        if (volbaKriteria != 3) {
+            this->volbaVzdelania(typ);
+        }
+
+        switch (volbaKriteria) {
+            case 1:
+                bezFiltrovePocet(typ);
+                break;
+            case 2:
+                bezFiltrovePodiel(typ);
+                break;
+            default:
+                bezFiltroveNazov();
+        }
+    }
+    void Aplikacia::bezFiltroveNazov() {
+        CriterionObecNazov nazov;
+        for (auto data : *obce) {
+            std::cout << nazov.evaluate(*data->accessData()) << std::endl;
+        }
+    }
+    void Aplikacia::bezFiltrovePocet(TypVzdelania typ) {
+        CriterionObecNazov nazov;
+        CriterionObecVPocet vzdelPocet(typ);
+
+        for (auto data : *obce) {
+
+            std::cout << nazov.evaluate(*data->accessData()) << " || "
+                      << vzdelPocet.evaluate(*data->accessData()) << std::endl;
+        }
+    }
+
+    void Aplikacia::bezFiltrovePodiel(TypVzdelania typ) {
+        CriterionObecNazov nazov;
+        CriterionObecVPodiel cVzdelPodiel(typ);
+
+        for (auto data : *obce) {
+
+            std::cout << nazov.evaluate(*data->accessData()) << " || "
+                      << cVzdelPodiel.evaluate(*data->accessData()) << std::endl;
         }
     }
 
@@ -342,6 +398,7 @@ namespace structures {
         std::string vyber;
         int volbaFiltra;
         int volbaVzdelania;
+
         do {
             res = false;
             std::cout << "Zvolte si filter, ktorym budete filtrovat: " << std::endl;
@@ -356,50 +413,7 @@ namespace structures {
         } while (res);
 
         TypVzdelania typ;
-        do {
-            res = false;
-            std::cout << "Zvol si aky typ vzdelania bude filtrovat filter vzdelanie Pocet: " << std::endl;
-            std::cout << "0 - Bez ukonceneho vzdelania" << std::endl;
-            std::cout << "1 - Zakladne vzdelanie" << std::endl;
-            std::cout << "2 - Ucnovske vzdelanie" << std::endl;
-            std::cout << "3 - Stredne vzdelanie" << std::endl;
-            std::cout << "4 - Vyssie vzdelanie" << std::endl;
-            std::cout << "5- Vysokoskolske vzdelanie" << std::endl;
-            std::cout << "6 - Bez vzdelania" << std::endl;
-            std::cout << "7 - Nezistene" << std::endl;
-            std::cin >> vyber;
-            volbaVzdelania = atoi(vyber.c_str());
-            if (volbaVzdelania < 0 || volbaVzdelania > 7) {
-                res = true;
-                std::cout << "Bola zadana zla hodnota, prosim zopakujte vyber: ";
-            }
-        } while (res);
-
-        switch (volbaVzdelania) {
-            case 0:
-                typ = TypVzdelania::bez_ukonceneho;
-                break;
-            case 1:
-                typ = TypVzdelania::zakladne;
-                break;
-            case 2:
-                typ = TypVzdelania::ucnovske;
-                break;
-            case 3:
-                typ = TypVzdelania::stredne;
-                break;
-            case 4:
-                typ = TypVzdelania::vyssie;
-                break;
-            case 5:
-                typ = TypVzdelania::vysokoskolske;
-                break;
-            case 6:
-                typ = TypVzdelania::bez_vzdelania;
-                break;
-            default:
-                typ = TypVzdelania::nezistene;
-        }
+        this->volbaVzdelania(typ);
 
         if (volbaFiltra == 1) {
             jednoFiltroveVzdelaniePocet(typ);
@@ -407,197 +421,6 @@ namespace structures {
             jednoFiltroveVzdelaniePodiel(typ);
         }
 
-    }
-    void Aplikacia::dvojfiltrove() {
-        bool res = false;
-        std::string vyber;
-        int volbaVzdelaniaFPocet;
-        int volbaVzdelaniaFPodiel;
-
-        int volbaKompozicie;
-        TypVzdelania typPocet;
-        do {
-            res = false;
-            std::cout << "Zvol si aky typ vzdelania bude filtrovat filter vzdelanie Pocet: " << std::endl;
-            std::cout << "0 - Bez ukonceneho vzdelania" << std::endl;
-            std::cout << "1 - Zakladne vzdelanie" << std::endl;
-            std::cout << "2 - Ucnovske vzdelanie" << std::endl;
-            std::cout << "3 - Stredne vzdelanie" << std::endl;
-            std::cout << "4 - Vyssie vzdelanie" << std::endl;
-            std::cout << "5- Vysokoskolske vzdelanie" << std::endl;
-            std::cout << "6 - Bez vzdelania" << std::endl;
-            std::cout << "7 - Nezistene" << std::endl;
-            std::cin >> vyber;
-            volbaVzdelaniaFPocet = atoi(vyber.c_str());
-            if (volbaVzdelaniaFPocet < 0 || volbaVzdelaniaFPocet > 7) {
-                res = true;
-                std::cout << "Bola zadana zla hodnota, prosim zopakujte vyber: ";
-            }
-        } while (res);
-
-        switch (volbaVzdelaniaFPocet) {
-            case 0:
-                typPocet = TypVzdelania::bez_ukonceneho;
-                break;
-            case 1:
-                typPocet = TypVzdelania::zakladne;
-                break;
-            case 2:
-                typPocet = TypVzdelania::ucnovske;
-                break;
-            case 3:
-                typPocet = TypVzdelania::stredne;
-                break;
-            case 4:
-                typPocet = TypVzdelania::vyssie;
-                break;
-            case 5:
-                typPocet = TypVzdelania::vysokoskolske;
-                break;
-            case 6:
-                typPocet = TypVzdelania::bez_vzdelania;
-                break;
-            default:
-                typPocet = TypVzdelania::nezistene;
-        }
-
-        TypVzdelania typPodiel;
-        do {
-            res = false;
-            std::cout << "Zvol si aky typ vzdelania bude filtrovat filter vzdelanie Podiel: " << std::endl;
-            std::cout << "0 - Bez ukonceneho vzdelania" << std::endl;
-            std::cout << "1 - Zakladne vzdelanie" << std::endl;
-            std::cout << "2 - Ucnovske vzdelanie" << std::endl;
-            std::cout << "3 - Stredne vzdelanie" << std::endl;
-            std::cout << "4 - Vyssie vzdelanie" << std::endl;
-            std::cout << "5- Vysokoskolske vzdelanie" << std::endl;
-            std::cout << "6 - Bez vzdelania" << std::endl;
-            std::cout << "7 - Nezistene" << std::endl;
-            std::cin >> vyber;
-            volbaVzdelaniaFPodiel = atoi(vyber.c_str());
-            if (volbaVzdelaniaFPodiel < 0 || volbaVzdelaniaFPodiel > 7) {
-                res = true;
-                std::cout << "Bola zadana zla hodnota, prosim zopakujte vyber: ";
-            }
-        } while (res);
-
-        switch (volbaVzdelaniaFPodiel) {
-            case 0:
-                typPodiel = TypVzdelania::bez_ukonceneho;
-                break;
-            case 1:
-                typPodiel = TypVzdelania::zakladne;
-                break;
-            case 2:
-                typPodiel = TypVzdelania::ucnovske;
-                break;
-            case 3:
-                typPodiel = TypVzdelania::stredne;
-                break;
-            case 4:
-                typPodiel = TypVzdelania::vyssie;
-                break;
-            case 5:
-                typPodiel = TypVzdelania::vysokoskolske;
-                break;
-            case 6:
-                typPodiel = TypVzdelania::bez_vzdelania;
-                break;
-            default:
-                typPodiel = TypVzdelania::nezistene;
-        }
-        do {
-            res = false;
-            std::cout << "Chcete vyfiltrovat prienik filtrov alebo zjednotenie? :" << std::endl;
-            std::cout << " 1 - Prienik" << std::endl;
-            std::cout << " 2 - Zjednotenie" << std::endl;
-            std::cin >> vyber;
-            volbaKompozicie = atoi(vyber.c_str());
-            if (volbaKompozicie <= 0 || volbaKompozicie >= 3) {
-                res = true;
-                std::cout << "Bola zadana zla hodnota, prosim zopakujte vyber: ";
-            }
-        } while (res);
-        if (volbaKompozicie == 1) {
-            dvojfiltrove_AND(typPocet, typPodiel);
-        } else {
-            dvojfiltrove_OR(typPocet,typPodiel);
-        }
-    }
-
-    void Aplikacia::bezFiltrove() {
-        bool res;
-        std::string vyber;
-        int volbaKriteria;
-        int volbaVzdelania = 0;
-        do {
-            res = false;
-            std::cout << "Zvolte si kriterium, ktore chcete vypisat: " << std::endl;
-            std::cout << "1 - Vzdelanie Pocet" << std::endl;
-            std::cout << "2 - Vzdelanie Podiel" << std::endl;
-            std::cin >> vyber;
-            volbaKriteria = atoi(vyber.c_str());
-            if (volbaKriteria <= 0 || volbaKriteria >= 3) {
-                res = true;
-                std::cout << "Bola zadana zla hodnota, prosim zopakujte vyber: ";
-            }
-
-        }
-        while (res);
-
-        do {
-            res = false;
-            std::cout << "Zvol si podla akeho typu vzdelania budes filtrovat: " << std::endl;
-            std::cout << "0 - Bez ukonceneho vzdelania" << std::endl;
-            std::cout << "1 - Zakladne vzdelanie" << std::endl;
-            std::cout << "2 - Ucnovske vzdelanie" << std::endl;
-            std::cout << "3 - Stredne vzdelanie" << std::endl;
-            std::cout << "4 - Vyssie vzdelanie" << std::endl;
-            std::cout << "5- Vysokoskolske vzdelanie" << std::endl;
-            std::cout << "6 - Bez vzdelania" << std::endl;
-            std::cout << "7 - Nezistene" << std::endl;
-            std::cin >> vyber;
-            volbaVzdelania = atoi(vyber.c_str());
-            if (volbaVzdelania < 0 || volbaVzdelania > 7) {
-                res = true;
-                std::cout << "Bola zadana zla hodnota, prosim zopakujte vyber: ";
-            }
-        } while (res);
-
-        TypVzdelania typ;
-
-        switch (volbaVzdelania) {
-            case 0:
-                typ = TypVzdelania::bez_ukonceneho;
-                break;
-            case 1:
-                typ = TypVzdelania::zakladne;
-                break;
-            case 2:
-                typ = TypVzdelania::ucnovske;
-                break;
-            case 3:
-                typ = TypVzdelania::stredne;
-                break;
-            case 4:
-                typ = TypVzdelania::vyssie;
-                break;
-            case 5:
-                typ = TypVzdelania::vysokoskolske;
-                break;
-            case 6:
-                typ = TypVzdelania::bez_vzdelania;
-                break;
-            default:
-                typ = TypVzdelania::nezistene;
-        }
-
-        if (volbaKriteria == 1) {
-            bezFiltrovePocet(typ);
-
-        } else {
-            bezFiltrovePodiel(typ);
-      }
     }
 
     void Aplikacia::jednoFiltroveVzdelaniePocet(TypVzdelania typVzdelania) {
@@ -613,7 +436,6 @@ namespace structures {
         std::cin >> maxStr;
         max = atoi(maxStr.c_str());
 
-
         CriterionObecNazov nazov;
         CriterionObecVPocet vzdelPocet(typVzdelania);
         FilterObecVzdelPoc vzdelPoc(min,max,typVzdelania);
@@ -625,7 +447,6 @@ namespace structures {
                 << vzdelPocet.evaluate(*data->accessData()) << std::endl;
             }
         }
-
     }
 
     void Aplikacia::jednoFiltroveVzdelaniePodiel(TypVzdelania typVzdelania) {
@@ -656,30 +477,21 @@ namespace structures {
         }
     }
 
-    void Aplikacia::triedenie() {
+    void Aplikacia::dvojfiltrove() {
 
-    }
+        int volbaKompozicie;
+        TypVzdelania typPocet;
+        this->volbaVzdelania(typPocet);
 
-    void Aplikacia::bezFiltrovePocet(TypVzdelania typ) {
-        CriterionObecNazov nazov;
-        CriterionObecVPocet vzdelPocet(typ);
+        TypVzdelania typPodiel;
+        this->volbaVzdelania(typPodiel);
 
-        for (auto data : *obce) {
+        this->volbaKompozicie(volbaKompozicie);
 
-            std::cout << nazov.evaluate(*data->accessData()) << " || "
-            << vzdelPocet.evaluate(*data->accessData()) << std::endl;
-        }
-    }
-
-    void Aplikacia::bezFiltrovePodiel(TypVzdelania typ) {
-        CriterionObecNazov nazov;
-        CriterionObecVPodiel cVzdelPodiel(typ);
-
-        for (auto data : *obce) {
-
-            std::cout << nazov.evaluate(*data->accessData()) << " || "
-                      << cVzdelPodiel.evaluate(*data->accessData()) << std::endl;
-
+        if (volbaKompozicie == 1) {
+            dvojfiltrove_AND(typPocet, typPodiel);
+        } else {
+            dvojfiltrove_OR(typPocet,typPodiel);
         }
     }
 
@@ -780,6 +592,211 @@ namespace structures {
             }
         }
     }
+
+    void Aplikacia::triedenie() {
+
+        int volbaTriedenia;
+        this->volbaTriedenia(volbaTriedenia);
+        TypVzdelania typ;
+
+        if (volbaTriedenia != 1) {
+            this->volbaVzdelania(typ);
+        }
+        switch (volbaTriedenia) {
+            case 1:
+                triedPodlaNazvu();
+                break;
+            case 2:
+                triedPodlaPoctu(typ);
+                break;
+            default:
+                triedPodlaPodielu(typ);
+        }
+    }
+
+    void Aplikacia::triedPodlaNazvu(){
+        int volbaTriedenia;
+        auto sorterString = new structures::HeapSort<std::string,structures::Obec*,std::string>;
+
+        CriterionObecNazov nazov;
+        this->volbaZotriedenia(volbaTriedenia);
+
+        if (volbaTriedenia == 1) {
+            sorterString->sortWithCriterion(*unsortedTable,true,nazov);
+        } else {
+            sorterString->sortWithCriterion(*unsortedTable, false,nazov);
+        }
+
+        for (auto data : *unsortedTable) {
+            std::cout << nazov.evaluate(*data->accessData()) << std::endl;
+        }
+
+        delete sorterString;
+    }
+
+    void Aplikacia::triedPodlaPoctu(TypVzdelania typ) {
+        auto sorterInt = new structures::HeapSort<std::string,structures::Obec*,int>;
+        CriterionObecVPocet vzdelPocet(typ);
+
+
+        delete sorterInt;
+
+    }
+
+    void Aplikacia::triedPodlaPodielu(TypVzdelania typ) {
+        auto sorterDouble = new structures::HeapSort<std::string,structures::Obec*,double>;
+
+
+        delete sorterDouble;
+    }
+
+
+
+
+    void Aplikacia::volbaKriteria(int &volba) {
+        bool res;
+        std::string vyber;
+        do {
+            res = false;
+            std::cout << "Zvolte si kriterium, ktore chcete vypisat: " << std::endl;
+            std::cout << "1 - Vzdelanie Pocet" << std::endl;
+            std::cout << "2 - Vzdelanie Podiel" << std::endl;
+            std::cout << "3 - Nazov" << std::endl;
+
+            std::cin >> vyber;
+            volba = atoi(vyber.c_str());
+            if (volba <= 0 || volba > 3) {
+                res = true;
+                std::cout << "Bola zadana zla hodnota, prosim zopakujte vyber: ";
+            }
+
+        } while (res);
+
+    }
+
+    void Aplikacia::volbaVzdelania(TypVzdelania &typ) {
+        bool res;
+        int volbaVzdelania;
+        std::string vyber;
+        do {
+            res = false;
+            std::cout << "Zvol si aky typ vzdelania bude filtrovat filter vzdelanie Pocet: " << std::endl;
+            std::cout << "0 - Bez ukonceneho vzdelania" << std::endl;
+            std::cout << "1 - Zakladne vzdelanie" << std::endl;
+            std::cout << "2 - Ucnovske vzdelanie" << std::endl;
+            std::cout << "3 - Stredne vzdelanie" << std::endl;
+            std::cout << "4 - Vyssie vzdelanie" << std::endl;
+            std::cout << "5- Vysokoskolske vzdelanie" << std::endl;
+            std::cout << "6 - Bez vzdelania" << std::endl;
+            std::cout << "7 - Nezistene" << std::endl;
+            std::cin >> vyber;
+            volbaVzdelania = atoi(vyber.c_str());
+            if (volbaVzdelania < 0 || volbaVzdelania > 7) {
+                res = true;
+                std::cout << "Bola zadana zla hodnota, prosim zopakujte vyber: ";
+            }
+        } while (res);
+
+        switch (volbaVzdelania) {
+            case 0:
+                typ = TypVzdelania::bez_ukonceneho;
+                break;
+            case 1:
+                typ = TypVzdelania::zakladne;
+                break;
+            case 2:
+                typ = TypVzdelania::ucnovske;
+                break;
+            case 3:
+                typ = TypVzdelania::stredne;
+                break;
+            case 4:
+                typ = TypVzdelania::vyssie;
+                break;
+            case 5:
+                typ = TypVzdelania::vysokoskolske;
+                break;
+            case 6:
+                typ = TypVzdelania::bez_vzdelania;
+                break;
+            default:
+                typ = TypVzdelania::nezistene;
+        }
+    }
+
+    void Aplikacia::volbaZotriedenia(int &volba) {
+        bool res;
+        std::string vyberTriedenia;
+        do {
+            res = false;
+            std::cout << "Ako chcete usporiadat nazvy: " << std::endl;
+            std::cout << " 1 - Vzostupne" << std::endl;
+            std::cout << " 2 - Zostupne" << std::endl;
+            std::cin >> vyberTriedenia ;
+            volba = atoi(vyberTriedenia.c_str());
+            if (volba <= 0 || volba >= 3) {
+                res = true;
+                std::cout << "Bola zadana zla hodnota, prosim zopakujte vyber: " << std::endl;
+            }
+        }
+        while(res);
+    }
+
+    void Aplikacia::volbaKompozicie(int &volba) {
+        bool res;
+        std::string vyber;
+        do {
+            res = false;
+            std::cout << "Chcete vyfiltrovat prienik filtrov alebo zjednotenie? :" << std::endl;
+            std::cout << " 1 - Prienik" << std::endl;
+            std::cout << " 2 - Zjednotenie" << std::endl;
+            std::cin >> vyber;
+            volba = atoi(vyber.c_str());
+            if (volba <= 0 || volba >= 3) {
+                res = true;
+                std::cout << "Bola zadana zla hodnota, prosim zopakujte vyber: ";
+            }
+        } while (res);
+    }
+
+    void Aplikacia::volbaFiltra(int &volba) {
+        bool res;
+        std::string vyber;
+        do {
+            res = false;
+            std::cout << "Zvolte si kolko filtrov budete pouzivat: " << std::endl;
+            std::cout << "1 - 1 filter " << std::endl;
+            std::cout << "2 - 2 filtre" << std::endl;
+            std::cout << "3 - Bez filtra" << std::endl;
+            std::cin >> vyber;
+            volba = atoi(vyber.c_str());
+            if (volba <= 0 || volba >= 4) {
+                res = true;
+                std::cout << "Bola zadana zla hodnota, prosim zopakujte vyber: ";
+            }
+        } while (res);
+    }
+
+    void Aplikacia::volbaTriedenia(int &volba) {
+        bool res;
+        std::string vyberTriedenia;
+        do {
+            res = false;
+            std::cout << "Vyberte si ako chcete triedit: " << std::endl;
+            std::cout << " 1 - Podla nazvu " << std::endl;
+            std::cout << " 2 - Podla poctu vzdelania " << std::endl;
+            std::cout << " 3 - Podla podielu vzdelania " << std::endl;
+            std::cin >> vyberTriedenia;
+            volba = atoi(vyberTriedenia.c_str());
+            if (volba <= 0 || volba >= 4) {
+                res = true;
+                std::cout << "Bola zadana zla hodnota, prosim zopakujte vyber: " << std::endl;
+            }
+
+        }while (res);
+    }
+
+
 }
 
 

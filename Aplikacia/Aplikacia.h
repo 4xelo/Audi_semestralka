@@ -14,6 +14,7 @@ namespace structures
     private:
         SortedSequenceTable<std::string, Obec*>* obce;
         SortedSequenceTable<std::string, std::string>* pomTabObce;
+        UnsortedSequenceTable<std::string, Obec*>* unsortedTable;
     public:
         Aplikacia();
         void nacitaj();
@@ -39,6 +40,13 @@ namespace structures
 
     private:
 
+        void volbaTriedenia(int &volba);
+        void volbaFiltra(int &volba);
+        void volbaKompozicie(int &volba);
+        void volbaKriteria(int &volba);
+        void volbaVzdelania(TypVzdelania &typ);
+        void volbaZotriedenia(int &volba);
+
         void bezFiltrovePocet(TypVzdelania typ);
 
         void bezFiltrovePodiel(TypVzdelania typ);
@@ -50,5 +58,13 @@ namespace structures
         void dvojfiltrove_AND(TypVzdelania vzdPoc, TypVzdelania vzdPod);
 
         void dvojfiltrove_OR(TypVzdelania vzdPoc, TypVzdelania vzdPod);
+
+        void triedPodlaNazvu();
+
+        void triedPodlaPoctu(TypVzdelania typ);
+
+        void triedPodlaPodielu(TypVzdelania typ);
+
+        void bezFiltroveNazov();
     };
 }
