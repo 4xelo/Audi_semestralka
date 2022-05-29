@@ -14,7 +14,7 @@ namespace structures
     private:
         SortedSequenceTable<std::string, Obec*>* obce;
         SortedSequenceTable<std::string, std::string>* pomTabObce;
-        UnsortedSequenceTable<std::string, Obec*>* unsortedTable;
+
     public:
         Aplikacia();
         void nacitaj();
@@ -48,19 +48,24 @@ namespace structures
         void volbaZotriedenia(int &volba);
         void volbaFiltrovaniaPredTriedenim(int &volba);
 
-        void bezFiltroveNazov(UnsortedSequenceTable<std::string, Obec*> &tab,bool sorting);
 
-        void bezFiltrovePocet(TypVzdelania typ,UnsortedSequenceTable<std::string, Obec*> &tab,bool sorting);
+        void bezFiltroveNazov();
 
-        void bezFiltrovePodiel(TypVzdelania typ,UnsortedSequenceTable<std::string, Obec*> &tab,bool sorting);
+        void bezFiltrovePocet(TypVzdelania typ);
 
-        void jednoFiltroveVzdelaniePocet(TypVzdelania vzdelania, UnsortedSequenceTable<std::string, Obec*> &tab,bool sorting);
+        void bezFiltrovePodiel(TypVzdelania typ);
 
-        void jednoFiltroveVzdelaniePodiel(TypVzdelania vzdelania, UnsortedSequenceTable<std::string, Obec*> &tab,bool sorting);
+        void jednoFiltroveVzdelaniePocet_Sort(TypVzdelania vzdelania, UnsortedSequenceTable<std::string, Obec*> &tab);
+        void jednoFiltroveVzdelaniePocet(TypVzdelania vzdelania);
 
-        void dvojfiltrove_AND(TypVzdelania vzdPoc, TypVzdelania vzdPod, UnsortedSequenceTable<std::string, Obec*> &tab,bool sorting);
+        void jednoFiltroveVzdelaniePodiel_Sort(TypVzdelania vzdelania,UnsortedSequenceTable<std::string, Obec*> &tab);
+        void jednoFiltroveVzdelaniePodiel(TypVzdelania vzdelania);
 
-        void dvojfiltrove_OR(TypVzdelania vzdPoc, TypVzdelania vzdPod,UnsortedSequenceTable<std::string, Obec*> &tab,bool sorting);
+
+        void dvojfiltrove_AND(TypVzdelania vzdPoc, TypVzdelania vzdPod);
+
+
+        void dvojfiltrove_OR(TypVzdelania vzdPoc, TypVzdelania vzdPod);
 
         void triedPodlaNazvu();
 
@@ -68,7 +73,7 @@ namespace structures
 
         void triedPodlaPodielu(TypVzdelania typ);
 
-        void obnov();
+
 
     };
 }
