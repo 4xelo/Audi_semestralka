@@ -56,7 +56,20 @@ namespace  structures
 
     double Obec::podielObyvSoVzdelanim(TypVzdelania typ) const {
         int index = static_cast<int>(typ);
-        double result = (double)vzdelanie->getPocetLudi(index) / pocetObyvatelovObce;
+        double result;
+        if (pocetObyvatelovObce != 0) {
+             result = (double)vzdelanie->getPocetLudi(index) / pocetObyvatelovObce;
+        } else {
+            result = (double)vzdelanie->getPocetLudi(index) / 1;
+        }
+
         return result;
+    }
+
+    Obec::Obec(Obec& data):
+    officialTitle(data.officialTitle), pocetObyvatelovObce(data.pocetObyvatelovObce), vzdelanie(new Vzdelanie(*data.vzdelanie)),
+    mediumTitle(data.mediumTitle), shortTitle(data.shortTitle)
+    {
+
     }
 }

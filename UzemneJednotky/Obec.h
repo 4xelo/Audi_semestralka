@@ -20,6 +20,7 @@ namespace structures {
     public:
         Obec(std::string kod, std::string ofTit, std::string meTit, std::string shTit, Vzdelanie *vzd);
         ~Obec();
+        Obec(Obec& data);
         int getPocetObyvatelov();
         std::string getNazov() const;
         int pocetObyvSoVzdelanim(TypVzdelania vzd) const;

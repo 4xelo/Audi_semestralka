@@ -17,11 +17,10 @@ namespace structures
 
     Vzdelanie& Vzdelanie::assign(Vzdelanie& other)
     {
-        if (this != &other)
-        {
-            delete pocetLudiVzdelanie_;
-            pocetLudiVzdelanie_ = new Array<int>(*other.pocetLudiVzdelanie_);
-        }
+
+        delete pocetLudiVzdelanie_;
+
+        pocetLudiVzdelanie_ = new Array<int>(*other.pocetLudiVzdelanie_);
         return *this;
     }
 
@@ -42,8 +41,9 @@ namespace structures
     }
 
     Vzdelanie::Vzdelanie(Vzdelanie& vzd)
-    : pocetLudiVzdelanie_(vzd.pocetLudiVzdelanie_)
+
     {
+        pocetLudiVzdelanie_->assign(*vzd.pocetLudiVzdelanie_);
     }
 
     Vzdelanie::Vzdelanie() {

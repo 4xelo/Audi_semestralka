@@ -31,11 +31,11 @@ namespace structures
         void triedenie();
 
 
-        void jednoFiltrove();
+        void jednoFiltrove(bool sorting);
 
-        void dvojfiltrove();
+        void dvojfiltrove(bool sorting);
 
-        void bezFiltrove();
+        void bezFiltrove(bool sorting);
 
 
     private:
@@ -46,18 +46,21 @@ namespace structures
         void volbaKriteria(int &volba);
         void volbaVzdelania(TypVzdelania &typ);
         void volbaZotriedenia(int &volba);
+        void volbaFiltrovaniaPredTriedenim(int &volba);
 
-        void bezFiltrovePocet(TypVzdelania typ);
+        void bezFiltroveNazov(UnsortedSequenceTable<std::string, Obec*> &tab,bool sorting);
 
-        void bezFiltrovePodiel(TypVzdelania typ);
+        void bezFiltrovePocet(TypVzdelania typ,UnsortedSequenceTable<std::string, Obec*> &tab,bool sorting);
 
-        void jednoFiltroveVzdelaniePocet(TypVzdelania vzdelania);
+        void bezFiltrovePodiel(TypVzdelania typ,UnsortedSequenceTable<std::string, Obec*> &tab,bool sorting);
 
-        void jednoFiltroveVzdelaniePodiel(TypVzdelania vzdelania);
+        void jednoFiltroveVzdelaniePocet(TypVzdelania vzdelania, UnsortedSequenceTable<std::string, Obec*> &tab,bool sorting);
 
-        void dvojfiltrove_AND(TypVzdelania vzdPoc, TypVzdelania vzdPod);
+        void jednoFiltroveVzdelaniePodiel(TypVzdelania vzdelania, UnsortedSequenceTable<std::string, Obec*> &tab,bool sorting);
 
-        void dvojfiltrove_OR(TypVzdelania vzdPoc, TypVzdelania vzdPod);
+        void dvojfiltrove_AND(TypVzdelania vzdPoc, TypVzdelania vzdPod, UnsortedSequenceTable<std::string, Obec*> &tab,bool sorting);
+
+        void dvojfiltrove_OR(TypVzdelania vzdPoc, TypVzdelania vzdPod,UnsortedSequenceTable<std::string, Obec*> &tab,bool sorting);
 
         void triedPodlaNazvu();
 
@@ -65,6 +68,7 @@ namespace structures
 
         void triedPodlaPodielu(TypVzdelania typ);
 
-        void bezFiltroveNazov();
+        void obnov();
+
     };
 }

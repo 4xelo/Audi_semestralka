@@ -106,7 +106,6 @@ namespace structures {
             obcST = colNameObc;
 
             if (vzdCode == obcCode) {
-
                 auto vzd_1 = new Vzdelanie(vzd0, vzd1, vzd2, vzd3, vzd4, vzd5, vzd6, vzd7);
                 auto vzd_2 = new Vzdelanie(vzd0, vzd1, vzd2, vzd3, vzd4, vzd5, vzd6, vzd7);
                 auto obec1 = new Obec(obcCode, obcOT, obcMT, obcST, vzd_1);
@@ -156,12 +155,14 @@ namespace structures {
         }
         for (auto data: *unsortedTable)
         {
-            if (data->accessData() != nullptr) {
-                delete data->accessData();
-            }
+
+            delete data->accessData();
+
         }
         delete obce;
+        obce = nullptr;
         delete unsortedTable;
+        unsortedTable = nullptr;
         delete pomTabObce;
     }
 
@@ -225,59 +226,11 @@ namespace structures {
                     }
 
                     default:;
-
                 }
-
-
             }
 
         } while (volba != 0);
 
-
-//        structures::Obec* obec = najdi("Trnava");
-//
-//
-//
-//        int pocetLudi = obec->pocetObyvSoVzdelanim(TypVzdelania::vysokoskolske);
-//        double podielLudi = obec->podielObyvSoVzdelanim(TypVzdelania::vysokoskolske);
-//
-//        FilterObecVzdelPoc vzdelPoc(350,400,TypVzdelania::vysokoskolske);
-//
-//        CriterionObecVPocet vzd(TypVzdelania::vysokoskolske);
-//        CriterionObecNazov nazov;
-//
-//        Filter_OR fOr;
-//        fOr.registerFilter(&vzdelPoc);
-//
-//        auto* unsTab = new structures::UnsortedSequenceTable<std::string, structures::Obec*>;
-//
-//
-//        for (auto data : *obce) {
-//            if (vzdelPoc.pass(*data->accessData())) {
-//
-//                unsTab->insert(data->getKey(),data->accessData());
-//                std::cout << nazov.evaluate(*data->accessData()) << " " <<  std::endl;
-//                std::cout << vzd.evaluate(*data->accessData()) << std::endl;
-//            }
-//        }
-//
-//        std::cout << std::endl;
-        //auto sorterInt = new structures::HeapSort<std::string,structures::Obec*,int>;
-//        auto sorterDouble = new structures::HeapSort<std::string,structures::Obec*,double>;
-//        auto sorterString = new structures::HeapSort<std::string,structures::Obec*,std::string>;
-//
-        //         sorterInt->sortWithCriterion(*unsTab, true,vzd);
-//
-//        for (auto item : *unsTab) {
-//            std::cout  << vzd.evaluate(*item->accessData()) << std::endl;
-//        }
-//
-//
-
-       // delete unsTab;
-//        delete sorterInt;
-//        delete sorterDouble;
-//        delete sorterString;
     }
 
     void Aplikacia::bodoveVyhladavanie() {
@@ -293,8 +246,6 @@ namespace structures {
             } catch (std::logic_error) {
                 obec = nullptr;
             }
-
-
             if (obec == nullptr) {
                 res = true;
                 std::cout << "Zadana obec sa nenasla, zadajte znova: ";
@@ -324,26 +275,28 @@ namespace structures {
 
     void Aplikacia::filtrovanie() {
         bool res;
+        bool sorting = false;
         std::string vyber;
         int volbaFiltra;
         this->volbaFiltra(volbaFiltra);
         switch (volbaFiltra) {
             case 1: {
-                jednoFiltrove();
+                jednoFiltrove(sorting);
                 break;
             }
             case 2: {
-                dvojfiltrove();
+                dvojfiltrove(sorting);
                 break;
             }
             default:
-                bezFiltrove();
-                break;
+                bezFiltrove(sorting);
+
         }
     }
 
-    void Aplikacia::bezFiltrove() {
+    void Aplikacia::bezFiltrove(bool sorting) {
         bool res;
+        bool need = sorting;
         std::string vyber;
         int volbaKriteria;
         int volbaVzdelania = 0;
@@ -356,49 +309,76 @@ namespace structures {
 
         switch (volbaKriteria) {
             case 1:
-                bezFiltrovePocet(typ);
+                bezFiltrovePocet(typ,*unsortedTable, need);
                 break;
             case 2:
-                bezFiltrovePodiel(typ);
+                bezFiltrovePodiel(typ,*unsortedTable, need);
                 break;
             default:
-                bezFiltroveNazov();
+                bezFiltroveNazov(*unsortedTable, need);
         }
     }
-    void Aplikacia::bezFiltroveNazov() {
+    void Aplikacia::bezFiltroveNazov(UnsortedSequenceTable<std::string, Obec*> &tab,bool sorting) {
         CriterionObecNazov nazov;
+        if (sorting) {
+            tab.clear();
+            for (auto data : *obce) {
+                tab.insert(data->getKey(), new Obec(*data->accessData()));
+            }
+        } else {
+            for (auto data : *obce) {
+                std::cout << nazov.evaluate(*data->accessData()) << std::endl;
+            }
+        }
+
         for (auto data : *obce) {
             std::cout << nazov.evaluate(*data->accessData()) << std::endl;
+            if (sorting) {
+                tab.insert(data->getKey(), new Obec(*data->accessData()));
+            }
         }
     }
-    void Aplikacia::bezFiltrovePocet(TypVzdelania typ) {
+    void Aplikacia::bezFiltrovePocet(TypVzdelania typ,UnsortedSequenceTable<std::string, Obec*> &tab,bool sorting) {
         CriterionObecNazov nazov;
         CriterionObecVPocet vzdelPocet(typ);
-
-        for (auto data : *obce) {
-
-            std::cout << nazov.evaluate(*data->accessData()) << " || "
-                      << vzdelPocet.evaluate(*data->accessData()) << std::endl;
+        if (sorting) {
+            tab.clear();
+            for (auto data : *obce) {
+                tab.insert(data->getKey(), new Obec(*data->accessData()));
+            }
         }
+        else {
+            for (auto data : *obce) {
+                std::cout << nazov.evaluate(*data->accessData()) << " || "
+                          << vzdelPocet.evaluate(*data->accessData()) << std::endl;
+
+            }
+        }
+
     }
 
-    void Aplikacia::bezFiltrovePodiel(TypVzdelania typ) {
+    void Aplikacia::bezFiltrovePodiel(TypVzdelania typ,UnsortedSequenceTable<std::string, Obec*> &tab,bool sorting) {
         CriterionObecNazov nazov;
         CriterionObecVPodiel cVzdelPodiel(typ);
-
-        for (auto data : *obce) {
-
-            std::cout << nazov.evaluate(*data->accessData()) << " || "
-                      << cVzdelPodiel.evaluate(*data->accessData()) << std::endl;
+        if (sorting) {
+            tab.clear();
+            for (auto data : *obce) {
+                tab.insert(data->getKey(), new Obec(*data->accessData()));
+            }
+        } else {
+            for (auto data : *obce) {
+                std::cout << nazov.evaluate(*data->accessData()) << " || "
+                          << cVzdelPodiel.evaluate(*data->accessData()) << std::endl;
+            }
         }
     }
 
-    void Aplikacia::jednoFiltrove() {
+    void Aplikacia::jednoFiltrove(bool sorting) {
         bool res;
         std::string vyber;
         int volbaFiltra;
         int volbaVzdelania;
-
+        bool need = sorting;
         do {
             res = false;
             std::cout << "Zvolte si filter, ktorym budete filtrovat: " << std::endl;
@@ -416,14 +396,14 @@ namespace structures {
         this->volbaVzdelania(typ);
 
         if (volbaFiltra == 1) {
-            jednoFiltroveVzdelaniePocet(typ);
+            jednoFiltroveVzdelaniePocet(typ,*unsortedTable,need);
         }else {
-            jednoFiltroveVzdelaniePodiel(typ);
+            jednoFiltroveVzdelaniePodiel(typ,*unsortedTable,need);
         }
 
     }
 
-    void Aplikacia::jednoFiltroveVzdelaniePocet(TypVzdelania typVzdelania) {
+    void Aplikacia::jednoFiltroveVzdelaniePocet(TypVzdelania typVzdelania,UnsortedSequenceTable<std::string, Obec*> &tab,bool sorting) {
         int min;
         int max;
         std::string minStr;
@@ -439,22 +419,29 @@ namespace structures {
         CriterionObecNazov nazov;
         CriterionObecVPocet vzdelPocet(typVzdelania);
         FilterObecVzdelPoc vzdelPoc(min,max,typVzdelania);
-
-        for (auto data : *obce) {
-            if (vzdelPoc.pass(*data->accessData())) {
-
-                std::cout << nazov.evaluate(*data->accessData()) << " || "
-                << vzdelPocet.evaluate(*data->accessData()) << std::endl;
+        if (sorting) {
+            tab.clear();
+            for (auto data : *obce) {
+                if (vzdelPoc.pass(*data->accessData())) {
+                    tab.insert(data->getKey(), new Obec(*data->accessData()));
+                }
+            }
+        } else {
+            for (auto data : *obce) {
+                if (vzdelPoc.pass(*data->accessData())) {
+                    std::cout << nazov.evaluate(*data->accessData()) << " || "
+                              << vzdelPocet.evaluate(*data->accessData()) << std::endl;
+                }
             }
         }
     }
 
-    void Aplikacia::jednoFiltroveVzdelaniePodiel(TypVzdelania typVzdelania) {
+    void Aplikacia::jednoFiltroveVzdelaniePodiel(TypVzdelania typVzdelania,UnsortedSequenceTable<std::string, Obec*> &tab,bool sorting) {
         double min;
         double max;
         std::string minStr;
         std::string maxStr;
-        std::cout << "Zadaj spodnu hranicu intervalu v tvare (0.12)" << std::endl;
+        std::cout << "Zadaj spodnu hranicu intervalu v tvare (0.12)" << std::endl;//4,15,61
         std::cin.ignore();
         getline(std::cin,minStr);
         min = std::stod(minStr);
@@ -467,18 +454,27 @@ namespace structures {
         CriterionObecNazov nazov;
         CriterionObecVPodiel cVzdelPodiel(typVzdelania);
         FilterObecVzdelPodiel fVzdelPodiel(min,max,typVzdelania);
+        if (sorting) {
+            tab.clear();
+            for (auto data: *obce) {
+                if (fVzdelPodiel.pass(*data->accessData())) {
+                    tab.insert(data->getKey(), new Obec(*data->accessData()));
+                }
+            }
+        }
+        else {
+            for (auto data : *obce) {
+                if (fVzdelPodiel.pass(*data->accessData())) {
+                    std::cout << nazov.evaluate(*data->accessData()) << " || "
+                              << cVzdelPodiel.evaluate(*data->accessData()) << std::endl;
 
-        for (auto data : *obce) {
-            if (fVzdelPodiel.pass(*data->accessData())) {
-
-                std::cout << nazov.evaluate(*data->accessData()) << " || "
-                          << cVzdelPodiel.evaluate(*data->accessData()) << std::endl;
+                }
             }
         }
     }
 
-    void Aplikacia::dvojfiltrove() {
-
+    void Aplikacia::dvojfiltrove(bool sorting) {
+        bool need = sorting;
         int volbaKompozicie;
         TypVzdelania typPocet;
         this->volbaVzdelania(typPocet);
@@ -489,13 +485,13 @@ namespace structures {
         this->volbaKompozicie(volbaKompozicie);
 
         if (volbaKompozicie == 1) {
-            dvojfiltrove_AND(typPocet, typPodiel);
+            dvojfiltrove_AND(typPocet, typPodiel,*unsortedTable,need);
         } else {
-            dvojfiltrove_OR(typPocet,typPodiel);
+            dvojfiltrove_OR(typPocet,typPodiel,*unsortedTable,need);
         }
     }
 
-    void Aplikacia::dvojfiltrove_AND(TypVzdelania vzdPoc, TypVzdelania vzdPod) {
+    void Aplikacia::dvojfiltrove_AND(TypVzdelania vzdPoc, TypVzdelania vzdPod, UnsortedSequenceTable<std::string, Obec*> &tab,bool sorting) {
 
         int minPoc;
         int maxPoc;
@@ -536,17 +532,25 @@ namespace structures {
         filterAnd.registerFilter(&filterVzdelPodiel);
 
         std::cout << "\n\t\t\t\tFilrovanie"<< std::endl;
-
-        for (auto data : *obce) {
-            if (filterAnd.pass(*data->accessData())) {
-                std::cout << nazov.evaluate(*data->accessData()) << " || "
-                            << vzdelPocet.evaluate(*data->accessData()) << " || "
-                            << vzdelPodiel.evaluate(*data->accessData()) << std::endl;
+        if (sorting) {
+            tab.clear();
+            for (auto data: *obce) {
+                tab.insert(data->getKey(), new Obec(*data->accessData()));
             }
-        }
+        } else {
+            for (auto data: *obce) {
+                if (filterAnd.pass(*data->accessData())) {
+                    std::cout << nazov.evaluate(*data->accessData()) << " || "
+                              << vzdelPocet.evaluate(*data->accessData()) << " || "
+                              << vzdelPodiel.evaluate(*data->accessData()) << std::endl;
+                    }
+                }
+         }
     }
 
-    void Aplikacia::dvojfiltrove_OR(TypVzdelania vzdPoc, TypVzdelania vzdPod) {
+
+
+    void Aplikacia::dvojfiltrove_OR(TypVzdelania vzdPoc, TypVzdelania vzdPod,UnsortedSequenceTable<std::string, Obec*> &tab,bool sorting) {
         int minPoc;
         int maxPoc;
         std::string minStrPoc;
@@ -560,35 +564,46 @@ namespace structures {
         std::cin >> minStrPoc;
         minPoc = atoi(minStrPoc.c_str());
 
-        std::cout << "Zadaj hornu hranicu intervalu pre filter Vzdelanie Pocet"<< std::endl;
+        std::cout << "Zadaj hornu hranicu intervalu pre filter Vzdelanie Pocet" << std::endl;
         std::cin >> maxStrPoc;
         maxPoc = atoi(maxStrPoc.c_str());
 
         std::cout << "Zadaj spodnu hranicu intervalu pre filter Vzdelanie Podiel z intervalu (0.1 - 0.99)" << std::endl;
         std::cin.ignore();
-        getline(std::cin,minStrPod);
+        getline(std::cin, minStrPod);
         minPod = std::stod(minStrPod);
 
         std::cout << "Zadaj hornu hranicu intervalu pre filter Vzdelanie Podiel v tvare (0.1 - 0.99)" << std::endl;
         std::cin.ignore();
-        getline(std::cin,maxStrPod);
+        getline(std::cin, maxStrPod);
         maxPod = std::stod(maxStrPod);
 
         CriterionObecNazov nazov;
         CriterionObecVPocet vzdelPocet(vzdPoc);
         CriterionObecVPodiel vzdelPodiel(vzdPod);
 
-        FilterObecVzdelPoc filterVzdelPocet(minPoc,maxPoc,vzdPoc);
-        FilterObecVzdelPodiel filterVzdelPodiel(minPod,maxPod,vzdPod);
+        FilterObecVzdelPoc filterVzdelPocet(minPoc, maxPoc, vzdPoc);
+        FilterObecVzdelPodiel filterVzdelPodiel(minPod, maxPod, vzdPod);
         Filter_OR filterOr;
         filterOr.registerFilter(&filterVzdelPocet);
         filterOr.registerFilter(&filterVzdelPodiel);
-        std::cout << "\n\t\t\t\tFilrovanie"<< std::endl;
-        for (auto data : *obce) {
-            if (filterOr.pass(*data->accessData())) {
-                std::cout << nazov.evaluate(*data->accessData()) << " || "
-                          << vzdelPocet.evaluate(*data->accessData()) << " || "
-                          << vzdelPodiel.evaluate(*data->accessData()) << std::endl;
+        std::cout << "\n\t\t\t\tFilrovanie" << std::endl;
+
+        if (sorting) {
+            tab.clear();
+            for (auto data: *obce) {
+                tab.insert(data->getKey(), new Obec(*data->accessData()));
+            }
+        } else
+        {
+            for (auto data: *obce)
+            {
+                if (filterOr.pass(*data->accessData()))
+                {
+                    std::cout << nazov.evaluate(*data->accessData()) << " || "
+                              << vzdelPocet.evaluate(*data->accessData()) << " || "
+                              << vzdelPodiel.evaluate(*data->accessData()) << std::endl;
+                }
             }
         }
     }
@@ -617,42 +632,119 @@ namespace structures {
     void Aplikacia::triedPodlaNazvu(){
         int volbaTriedenia;
         auto sorterString = new structures::HeapSort<std::string,structures::Obec*,std::string>;
-
+        auto unsTable = new UnsortedSequenceTable<std::string, Obec*>;
         CriterionObecNazov nazov;
         this->volbaZotriedenia(volbaTriedenia);
 
-        if (volbaTriedenia == 1) {
-            sorterString->sortWithCriterion(*unsortedTable,true,nazov);
-        } else {
-            sorterString->sortWithCriterion(*unsortedTable, false,nazov);
+        for (auto data : *obce) {
+            unsTable->insert(data->getKey(),new Obec(*data->accessData()));
         }
 
-        for (auto data : *unsortedTable) {
+        if (volbaTriedenia == 1) {
+            sorterString->sortWithCriterion(*unsTable,true,nazov);
+        } else {
+            sorterString->sortWithCriterion(*unsTable, false,nazov);
+        }
+
+        for (auto data : *unsTable) {
             std::cout << nazov.evaluate(*data->accessData()) << std::endl;
         }
 
         delete sorterString;
+        for (auto item : *unsTable) {
+            delete item->accessData();
+        }
+        delete unsTable;
+        unsTable = nullptr;
     }
 
     void Aplikacia::triedPodlaPoctu(TypVzdelania typ) {
+        bool sorting = true;
+        int volbaFiltrovaniaPredTriedenim;
+        int volbaZotriedenia;
+        auto unsTable = new UnsortedSequenceTable<std::string, Obec*>;
         auto sorterInt = new structures::HeapSort<std::string,structures::Obec*,int>;
+        CriterionObecNazov nazov;
         CriterionObecVPocet vzdelPocet(typ);
+        this->volbaFiltrovaniaPredTriedenim(volbaFiltrovaniaPredTriedenim);
 
+        if (volbaFiltrovaniaPredTriedenim == 1) {
 
+            jednoFiltroveVzdelaniePocet(typ,*unsTable,sorting);
+
+            this->volbaZotriedenia(volbaZotriedenia);
+            if (volbaZotriedenia == 1) {
+                sorterInt->sortWithCriterion(*unsTable,true,vzdelPocet);
+            } else {
+                sorterInt->sortWithCriterion(*unsTable, false,vzdelPocet);
+            }
+        }
+        else {
+            this->volbaZotriedenia(volbaZotriedenia);
+            if (volbaZotriedenia == 1) {
+                sorterInt->sortWithCriterion(*unsTable,true,vzdelPocet);
+            } else {
+                sorterInt->sortWithCriterion(*unsTable, false,vzdelPocet);
+            }
+        }
+
+        for (auto data : *unsTable) {
+            std::cout << nazov.evaluate(*data->accessData()) << " " <<
+                      vzdelPocet.evaluate(*data->accessData()) << std::endl;
+        }
         delete sorterInt;
+
+        for (auto item : *unsTable) {
+            delete item->accessData();
+        }
+        delete unsTable;
+
+        unsTable = nullptr;
 
     }
 
     void Aplikacia::triedPodlaPodielu(TypVzdelania typ) {
         auto sorterDouble = new structures::HeapSort<std::string,structures::Obec*,double>;
+        bool sorting = true;
+        int volbaFiltrovaniaPredTriedenim;
+        int volbaZotriedenia;
+        auto unsTable = new UnsortedSequenceTable<std::string, Obec*>;
 
+        CriterionObecNazov nazov;
+        CriterionObecVPodiel vzdelPodiel(typ);
+        this->volbaFiltrovaniaPredTriedenim(volbaFiltrovaniaPredTriedenim);
 
+        if (volbaFiltrovaniaPredTriedenim == 1) {
+            jednoFiltroveVzdelaniePodiel(typ,*unsTable,sorting);
+
+            this->volbaZotriedenia(volbaZotriedenia);
+            if (volbaZotriedenia == 1) {
+                sorterDouble->sortWithCriterion(*unsTable,true,vzdelPodiel);
+            } else {
+                sorterDouble->sortWithCriterion(*unsTable, false,vzdelPodiel);
+            }
+        }
+        else {
+            this->volbaZotriedenia(volbaZotriedenia);
+            if (volbaZotriedenia == 1) {
+                sorterDouble->sortWithCriterion(*unsTable,true,vzdelPodiel);
+            } else {
+                sorterDouble->sortWithCriterion(*unsTable, false,vzdelPodiel);
+            }
+        }
+
+        for (auto data : *unsTable) {
+            std::cout << nazov.evaluate(*data->accessData()) << " " <<
+                      vzdelPodiel.evaluate(*data->accessData()) << std::endl;
+             }
+
+        for (auto item : *unsTable) {
+            delete item->accessData();
+        }
+        delete unsTable;
+        unsTable = nullptr;
         delete sorterDouble;
     }
-
-
-
-
     void Aplikacia::volbaKriteria(int &volba) {
         bool res;
         std::string vyber;
@@ -795,6 +887,26 @@ namespace structures {
 
         }while (res);
     }
+
+    void Aplikacia::volbaFiltrovaniaPredTriedenim(int &volba) {
+        bool res;
+        std::string vyber;
+
+        do {
+            res = false;
+            std::cout << "Chcete uplatnit filtrovanie pred triedenim? :" <<std::endl;
+            std::cout << " 1 - Ano" << std::endl;
+            std::cout << " 2 - Nie" << std::endl;
+            std::cin >> vyber;
+            volba = atoi(vyber.c_str());
+            if (volba <= 0 || volba >=3) {
+                res = true;
+                std::cout << "Bola zadana zla hodnota, prosim zopakujte vyber: " << std::endl;
+            }
+        }while (res);
+    }
+
+
 
 
 }
