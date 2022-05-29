@@ -34,7 +34,6 @@ namespace structures
 
         ~Vzdelanie();
         int getPocetLudi(int index);
-        void setPocetLudi(int index, int pocet);
-        Vzdelanie& assign(Vzdelanie& other);
+
     };
 }
